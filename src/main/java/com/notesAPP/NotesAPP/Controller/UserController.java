@@ -36,9 +36,7 @@ public class UserController {
     }
 
 
-    @PostMapping
-    public void createUser( @RequestBody UserEntity NewEntity) {
 
-      userService.saveNewUser(NewEntity);
-    }
+
+
 }
