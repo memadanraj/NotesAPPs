@@ -38,7 +38,7 @@ public class UserController {
     public ResponseEntity<?> example(@RequestBody UserEntity requestBody) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        authentication.getName();
         userService.saveNewUser(requestBody);
         return ResponseEntity.ok(requestBody);
     }
