@@ -18,7 +18,10 @@ public class SpringNotesAppSecurity {
     public SecurityFilterChain securityFilterChain(HttpSecurity http ) throws Exception {
 
         http
-                .authorizeHttpRequests(HttpSecurity -> HttpSecurity .anyRequest().authenticated())
+                .authorizeHttpRequests(HttpSecurity -> HttpSecurity
+//                        .requestMatchers("/test").permitAll()
+                        .anyRequest().permitAll())
+
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(Session ->Session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults());

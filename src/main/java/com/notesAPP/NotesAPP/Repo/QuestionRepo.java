@@ -1,9 +1,10 @@
 package com.notesAPP.NotesAPP.Repo;
 
-import com.notesAPP.NotesAPP.Entiry.QuestionsEntity;
+import com.notesAPP.NotesAPP.Entiry.TestEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface QuestionRepo extends JpaRepository<QuestionsEntity, Long> {
+public interface QuestionRepo extends JpaRepository<TestEntity, Long> {
+
+
+
 }

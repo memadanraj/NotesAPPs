@@ -1,15 +1,13 @@
 package com.notesAPP.NotesAPP.Entiry;
 
+
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 
 @Entity
-@Table(name = "questionsTb")
+@Table(name="testTB")
 
 
-public class QuestionsEntity {
-
+public class TestEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long qid;
@@ -22,43 +20,24 @@ public class QuestionsEntity {
 
     private String type;
 
-    private String Filename;
+    private String Imageurl;
 
-    private String Filetype;
+    private String imageID;
 
-    @Lob
-    private byte[] Filedata;
-
-    public Long getQid() {
-        return qid;
+    public String getImageID() {
+        return imageID;
     }
 
-    public void setQid(Long qid) {
-        this.qid = qid;
+    public void setImageID(String imageID) {
+        this.imageID = imageID;
     }
 
-    public byte[] getFiledata() {
-        return Filedata;
+    public String getImageurl() {
+        return Imageurl;
     }
 
-    public void setFiledata(byte[] filedata) {
-        Filedata = filedata;
-    }
-
-    public String getFiletype() {
-        return Filetype;
-    }
-
-    public void setFiletype(String filetype) {
-        Filetype = filetype;
-    }
-
-    public String getFilename() {
-        return Filename;
-    }
-
-    public void setFilename(String filename) {
-        Filename = filename;
+    public void setImageurl(String imageurl) {
+        Imageurl = imageurl;
     }
 
     public String getType() {
@@ -91,5 +70,13 @@ public class QuestionsEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getQid() {
+        return qid;
+    }
+
+    public void setQid(Long qid) {
+        this.qid = qid;
     }
 }
