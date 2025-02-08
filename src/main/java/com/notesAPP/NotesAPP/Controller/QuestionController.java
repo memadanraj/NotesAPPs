@@ -1,5 +1,6 @@
 package com.notesAPP.NotesAPP.Controller;
 
+import com.notesAPP.NotesAPP.Dto.ImageUrlDto;
 import com.notesAPP.NotesAPP.Dto.Imageinfo;
 import com.notesAPP.NotesAPP.Entiry.TestEntity;
 import com.notesAPP.NotesAPP.Services.CloudinaryService;
@@ -25,6 +26,7 @@ public class QuestionController {
       @Autowired
     private CloudinaryService cloudinaryService;
 
+// GET ALL QUESTIONS
     @GetMapping("/getAllQn")
     public ResponseEntity<?> getAllQn(){
         try {
@@ -35,7 +37,44 @@ public class QuestionController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+//GET BASED ON SEMESTER AND SUBJECTS
+    @GetMapping("/get/{sem}/{sub}")
+    public ResponseEntity<?> getBySubject(
+            @PathVariable String sem,
+            @PathVariable String sub
+    ){
+        try{
 
+            List<TestEntity> qnBySub = questionService.getQnBySubjects(sem,sub);
+
+            return new ResponseEntity<>(qnBySub,HttpStatus.OK);
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    //GET ONLY IMAGE BASED ON SEMESTER ADN SUBJECT
+    @GetMapping("/getQnImage/{sem}/{sub}")
+    public ResponseEntity<?> getImageBySemAndSub(
+            @PathVariable String sem,
+            @PathVariable String sub
+    ){
+        try{
+
+            List<ImageUrlDto> qnsImageBySub = questionService.getImageUrlBySubAndSem(sem,sub);
+
+
+                return new ResponseEntity<>(qnsImageBySub,HttpStatus.OK);
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    //POST QUESTIONS
     @PostMapping("/addqn")
     public ResponseEntity<?> imgaeupload(
             @RequestPart("testEntity") TestEntity testEntity,

@@ -1,5 +1,6 @@
 package com.notesAPP.NotesAPP.Services;
 
+import com.notesAPP.NotesAPP.Dto.ImageUrlDto;
 import com.notesAPP.NotesAPP.Dto.Imageinfo;
 import com.notesAPP.NotesAPP.Entiry.TestEntity;
 import com.notesAPP.NotesAPP.Repo.QuestionRepo;
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionService {
@@ -75,5 +77,23 @@ public  void  deleteQn(Long qid) throws IOException {
     }
 
 }
+
+// GET QN BASED ON SEM AND SUBJECT
+
+    public List<TestEntity> getQnBySubjects(String sem,String sub){
+        return questionRepo.findBySemAndSub(sem,sub);
+    }
+
+    //GET QN IMAGE ONLY BASED ON SEM AND SUBJECT ONLY
+
+    public  List<ImageUrlDto> getImageUrlBySubAndSem(String sem, String sub){
+        List<TestEntity> qnsEntity= questionRepo.findImageUrlBySemAndSub(sem,sub);
+
+        // Convert List<TestEntity> to List<ImageUrlDTO>
+        return qnsEntity.stream()
+                .map(entity -> new ImageUrlDto(entity.getImageurl()))
+                .collect(Collectors.toList());
+
+    }
 
 }

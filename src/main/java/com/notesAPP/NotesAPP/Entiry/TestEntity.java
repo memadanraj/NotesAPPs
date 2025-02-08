@@ -14,6 +14,8 @@ public class TestEntity {
 
     private String name;
 
+    private String sem;
+
     private String sub;
 
     private String year;
@@ -54,6 +56,13 @@ public class TestEntity {
 
     public void setYear(String year) {
         this.year = year;
+    }
+    public String getSem() {
+        return sem;
+    }
+
+    public void setSem(String sem) {
+        this.sem = sem;
     }
 
     public String getSub() {
