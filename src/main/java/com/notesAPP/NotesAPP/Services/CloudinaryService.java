@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -33,6 +35,24 @@ public class CloudinaryService {
                );
 return imageinfo;
     }
+
+//    public List<Imageinfo> uploadListImages (List<MultipartFile> imageurls) throws IOException {
+//
+//        List<Imageinfo> imageInfoList= new ArrayList<>();
+//
+//        for (MultipartFile file : imageurls) {
+//            Map uploadResult = cloudinary.uploader()
+//                    .upload(file.getBytes(), ObjectUtils.emptyMap());
+//
+//            Imageinfo imageinfo = new Imageinfo(
+//                    uploadResult.get("public_id").toString(),
+//                    uploadResult.get("secure_url").toString(),
+//                    uploadResult.get("format").toString()
+//            );
+//            imageInfoList.add(imageinfo);
+//        }
+//        return imageInfoList;
+//    }
 
 
     //to serve image
