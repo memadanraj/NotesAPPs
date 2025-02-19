@@ -3,6 +3,7 @@ package com.notesAPP.NotesAPP.Services;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.notesAPP.NotesAPP.Dto.Imageinfo;
+import com.notesAPP.NotesAPP.Dto.PDFinfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,23 +37,37 @@ public class CloudinaryService {
 return imageinfo;
     }
 
-//    public List<Imageinfo> uploadListImages (List<MultipartFile> imageurls) throws IOException {
-//
-//        List<Imageinfo> imageInfoList= new ArrayList<>();
-//
-//        for (MultipartFile file : imageurls) {
-//            Map uploadResult = cloudinary.uploader()
-//                    .upload(file.getBytes(), ObjectUtils.emptyMap());
-//
-//            Imageinfo imageinfo = new Imageinfo(
-//                    uploadResult.get("public_id").toString(),
-//                    uploadResult.get("secure_url").toString(),
-//                    uploadResult.get("format").toString()
-//            );
-//            imageInfoList.add(imageinfo);
-//        }
-//        return imageInfoList;
-//    }
+    public PDFinfo uploadPDF (MultipartFile pdfFile) throws IOException {
+
+        Map uploadPDFresult = cloudinary.uploader()
+                .upload(pdfFile.getBytes(),ObjectUtils.emptyMap());
+       PDFinfo pdFinfo = new PDFinfo(
+               uploadPDFresult.get("public_id").toString(),
+               uploadPDFresult.get("secure_url").toString()
+       ) ;
+       return pdFinfo;
+    }
+
+    //UPLOAD MUTI IMAGES IN CLOUDINARY
+    public List<String> uploadListImages (List<MultipartFile> imageurls) throws IOException {
+
+        List<String> imageInfoList= new ArrayList<>();
+
+        for (MultipartFile file : imageurls) {
+            Map uploadResult = cloudinary.uploader()
+                    .upload(file.getBytes(), ObjectUtils.emptyMap());
+
+            Imageinfo imageinfo = new Imageinfo(
+                    uploadResult.get("public_id").toString(),
+                    uploadResult.get("secure_url").toString(),
+                    uploadResult.get("format").toString()
+            );
+
+
+          imageInfoList.add(String.valueOf(imageinfo.securedurl()));
+        }
+        return imageInfoList;
+    }
 
 
     //to serve image
@@ -62,7 +77,7 @@ return imageinfo;
 
     }
 
-// remove image
+// remove Cloudinary files
     public void delete(String publicId) throws IOException {
         cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
     }

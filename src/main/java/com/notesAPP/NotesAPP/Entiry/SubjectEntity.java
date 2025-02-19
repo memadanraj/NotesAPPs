@@ -27,6 +27,18 @@ public class SubjectEntity {
     @JsonManagedReference
     private List<ChapterEntity> chapterEntityList;
 
+    @OneToMany(mappedBy = "subjectEntity")
+    @JsonManagedReference
+    private List<SolutionEntity> solutionEntities;
+
+    public List<SolutionEntity> getSolutionEntities() {
+        return solutionEntities;
+    }
+
+    public void setSolutionEntities(List<SolutionEntity> solutionEntities) {
+        this.solutionEntities = solutionEntities;
+    }
+
     public Long getSubId() {
         return subId;
     }
