@@ -1,5 +1,6 @@
 package com.notesAPP.NotesAPP.Entiry;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.notesAPP.NotesAPP.Dto.ImageInfoMultipleImage;
 import com.notesAPP.NotesAPP.Dto.Imageinfo;
 import jakarta.persistence.*;
 
@@ -15,28 +16,21 @@ public class SolutionEntity {
 
     private String solName;
 
+
     @ElementCollection
-    private List<String> images;
+    private List<ImageInfoMultipleImage> images;
 
     @ManyToOne
     @JoinColumn(name = "subject_id")
     @JsonBackReference
     private SubjectEntity subjectEntity;
 
-    public SubjectEntity getSubjectEntity() {
-        return subjectEntity;
+    public Long getSolId() {
+        return solId;
     }
 
-    public void setSubjectEntity(SubjectEntity subjectEntity) {
-        this.subjectEntity = subjectEntity;
-    }
-
-    public List<String> getImages() {
-        return images;
-    }
-
-    public void setImages(List<String> images) {
-        this.images = images;
+    public void setSolId(Long solId) {
+        this.solId = solId;
     }
 
     public String getSolName() {
@@ -47,11 +41,21 @@ public class SolutionEntity {
         this.solName = solName;
     }
 
-    public Long getSolId() {
-        return solId;
+
+
+    public List<ImageInfoMultipleImage> getImages() {
+        return images;
     }
 
-    public void setSolId(Long solId) {
-        this.solId = solId;
+    public void setImages(List<ImageInfoMultipleImage> images) {
+        this.images = images;
+    }
+
+    public SubjectEntity getSubjectEntity() {
+        return subjectEntity;
+    }
+
+    public void setSubjectEntity(SubjectEntity subjectEntity) {
+        this.subjectEntity = subjectEntity;
     }
 }

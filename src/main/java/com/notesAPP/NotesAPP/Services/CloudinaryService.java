@@ -49,9 +49,9 @@ return imageinfo;
     }
 
     //UPLOAD MUTI IMAGES IN CLOUDINARY
-    public List<String> uploadListImages (List<MultipartFile> imageurls) throws IOException {
+    public List<Imageinfo> uploadListImages (List<MultipartFile> imageurls) throws IOException {
 
-        List<String> imageInfoList= new ArrayList<>();
+        List<Imageinfo> imageInfoList= new ArrayList<>();
 
         for (MultipartFile file : imageurls) {
             Map uploadResult = cloudinary.uploader()
@@ -64,7 +64,8 @@ return imageinfo;
             );
 
 
-          imageInfoList.add(String.valueOf(imageinfo.securedurl()));
+          imageInfoList.add(imageinfo);
+
         }
         return imageInfoList;
     }
@@ -80,5 +81,11 @@ return imageinfo;
 // remove Cloudinary files
     public void delete(String publicId) throws IOException {
         cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+    }
+
+    public void deleteImages(List<String> publicIds) throws IOException {
+        for (String publicId : publicIds) {
+            delete(publicId);
+        }
     }
 }

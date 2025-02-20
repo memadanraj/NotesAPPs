@@ -2,9 +2,7 @@ package com.notesAPP.NotesAPP.Controller;
 
 
 import com.cloudinary.Cloudinary;
-import com.notesAPP.NotesAPP.Dto.ImageUrlDto;
 import com.notesAPP.NotesAPP.Dto.Imageinfo;
-import com.notesAPP.NotesAPP.Entiry.ChapterEntity;
 import com.notesAPP.NotesAPP.Entiry.NotesEntiry;
 import com.notesAPP.NotesAPP.Services.CloudinaryService;
 import com.notesAPP.NotesAPP.Services.NotesService;
