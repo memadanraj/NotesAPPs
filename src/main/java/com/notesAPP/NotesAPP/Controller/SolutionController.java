@@ -77,7 +77,7 @@ public class SolutionController {
     }
 
     //GET NOTES BASED ON SOLUTION ID
-    @GetMapping("/updateGet/{solid}")
+    @PutMapping("/updateGet/{solid}")
     public ResponseEntity<?> getSolutionOnSolId(@PathVariable Long solid){
         try{
             Optional<SolutionEntity> solutionEntity= solutionService.getBySolId(solid);

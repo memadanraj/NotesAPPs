@@ -1,7 +1,11 @@
 package com.notesAPP.NotesAPP.Entiry;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.notesAPP.NotesAPP.Dto.ImageInfoMultipleImage;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name="testTB")
@@ -14,63 +18,25 @@ public class TestEntity {
 
     private String name;
 
-    private String sem;
-
-    private String sub;
-
     private String year;
 
     private String type;
 
-    private String Imageurl;
+    @ElementCollection
+    List<ImageInfoMultipleImage> imageurls;
 
-    private String imageID;
 
-    public String getImageID() {
-        return imageID;
+    @ManyToOne
+    @JoinColumn(name = "subject_id")
+    @JsonBackReference
+    private SubjectEntity subjectEntity;
+
+    public Long getQid() {
+        return qid;
     }
 
-    public void setImageID(String imageID) {
-        this.imageID = imageID;
-    }
-
-    public String getImageurl() {
-        return Imageurl;
-    }
-
-    public void setImageurl(String imageurl) {
-        Imageurl = imageurl;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
-    }
-    public String getSem() {
-        return sem;
-    }
-
-    public void setSem(String sem) {
-        this.sem = sem;
-    }
-
-    public String getSub() {
-        return sub;
-    }
-
-    public void setSub(String sub) {
-        this.sub = sub;
+    public void setQid(Long qid) {
+        this.qid = qid;
     }
 
     public String getName() {
@@ -81,11 +47,35 @@ public class TestEntity {
         this.name = name;
     }
 
-    public Long getQid() {
-        return qid;
+    public String getYear() {
+        return year;
     }
 
-    public void setQid(Long qid) {
-        this.qid = qid;
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public List<ImageInfoMultipleImage> getImageurls() {
+        return imageurls;
+    }
+
+    public void setImageurls(List<ImageInfoMultipleImage> imageurls) {
+        this.imageurls = imageurls;
+    }
+
+    public SubjectEntity getSubjectEntity() {
+        return subjectEntity;
+    }
+
+    public void setSubjectEntity(SubjectEntity subjectEntity) {
+        this.subjectEntity = subjectEntity;
     }
 }

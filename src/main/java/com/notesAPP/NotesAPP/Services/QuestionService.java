@@ -1,14 +1,18 @@
 package com.notesAPP.NotesAPP.Services;
 
-import com.notesAPP.NotesAPP.Dto.ImageUrlDto;
+import com.notesAPP.NotesAPP.Dto.ImageInfoMultipleImage;
 import com.notesAPP.NotesAPP.Dto.Imageinfo;
+import com.notesAPP.NotesAPP.Entiry.SubjectEntity;
 import com.notesAPP.NotesAPP.Entiry.TestEntity;
 import com.notesAPP.NotesAPP.Repo.QuestionRepo;
+import com.notesAPP.NotesAPP.Repo.SubjectRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,10 +24,43 @@ public class QuestionService {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+    @Autowired
+    private SubjectRepo subjectRepo;
 
     //POST NEW QUESTIONS
     public TestEntity addqn(TestEntity testEntity) {
+
+
+
         return questionRepo.save(testEntity);
+    }
+
+    //ADD QUESTION UPDATE
+    @Transactional
+    public  TestEntity addQuestions(String qName,
+                                    String qYears,
+                                    String qtype ,
+                                    String subName,
+                                    List<MultipartFile> file) throws IOException {
+
+        List<Imageinfo> imageUrl= cloudinaryService.uploadListImages(file);
+        List<ImageInfoMultipleImage> imageDataList = imageUrl.stream()
+                .map(img -> new ImageInfoMultipleImage(img.publicId(),img.securedurl()))
+                .toList();
+        Optional<SubjectEntity> subjectEntityOptional = subjectRepo.findBySubjectName(subName);
+
+        if(subjectEntityOptional.isPresent()) {
+            SubjectEntity subjectEntity = subjectEntityOptional.get();
+            TestEntity add = new TestEntity();
+            add.setName(qName);
+            add.setYear(qYears);
+            add.setType(qtype);
+            add.setSubjectEntity(subjectEntity);
+            add.setImageurls(imageDataList);
+            return questionRepo.save(add);
+        }else
+            throw new RuntimeException("Subject not Defined ");
+
     }
 
     //GET ALL QUESTIONS DETAILS
@@ -32,28 +69,41 @@ public class QuestionService {
     }
 
     // UPDATE EXIST DATA USING QID
-    public TestEntity updateQn(Long qid, TestEntity testEntity , MultipartFile file) throws IOException {
+    @Transactional
+    public TestEntity updateQn(Long qid,
+                               String qName,
+                               String qYears,
+                               String qType ,
+                               List<String> deleteId,
+                               List<MultipartFile> file) throws IOException {
         Optional<TestEntity> oldQuestionInDb = questionRepo.findById(qid);
         if(oldQuestionInDb.isPresent()){
             TestEntity t= oldQuestionInDb.get();
             //TEXT UPDATE HERE
-            t.setName(testEntity.getName());
-            t.setSub(testEntity.getSub());
-            t.setYear(testEntity.getYear());
-            t.setType(testEntity.getType());
+            t.setName(qName);
+            t.setYear(qYears);
+            t.setType(qType);
 
+            //FIRST DELETE IF RQU FOR IMAGE
+
+            if (deleteId != null) {
+                cloudinaryService.deleteImages(deleteId);
+                cloudinaryService.deleteImages(deleteId);
+                t.setImageurls(t.getImageurls()
+                        .stream()
+                        .filter(img -> !deleteId.contains(img.getPublicId()))
+                        .collect(Collectors.toList()));
+            }
             //IMAGE UPDATE HERE
 
-            if (file != null && !file.isEmpty()) {
-                // Delete the old image from Cloudinary
-                if (t.getImageID() != null) {
-                    cloudinaryService.delete(t.getImageID());
-                }
+            if (!file.isEmpty()) {
 
-                // Upload the new image
-                Imageinfo uploadedImage = cloudinaryService.upload(file);
-                t.setImageID(uploadedImage.publicId());
-                t.setImageurl(uploadedImage.securedurl());
+                List<Imageinfo> imageUrl = cloudinaryService.uploadListImages(file);
+                List<ImageInfoMultipleImage> imageDataList = imageUrl.stream()
+                        .map(img -> new ImageInfoMultipleImage(img.publicId(), img.securedurl()))
+                        .toList();
+                t.getImageurls().addAll(imageDataList);
+
             }
 
             return questionRepo.save(t);
@@ -67,33 +117,37 @@ public class QuestionService {
 public  void  deleteQn(Long qid) throws IOException {
         Optional<TestEntity> testEntity= questionRepo.findById(qid);
 
-        // DELETE IMAGE BY FINDING IMAGEID// PUBLIC ID
-    if (testEntity.isPresent()) {
-        TestEntity questionInDb = testEntity.get();
-        String imageID = questionInDb.getImageID();
-        cloudinaryService.delete(imageID);
+
+    if(testEntity.isPresent()){
+        TestEntity dQuestion= testEntity.get();
+        if(dQuestion.getImageurls()!=null && !dQuestion.getImageurls().isEmpty()){
+            List<String>publicIds=dQuestion.getImageurls().stream()
+                    .map(ImageInfoMultipleImage::getPublicId)
+                    .toList();
+            cloudinaryService.deleteImages(publicIds);
+        }
         questionRepo.deleteById(qid);
 
     }
-
+    else
+        throw new RemoteException("Solution Id Not found ");
 }
 
-// GET QN BASED ON SEM AND SUBJECT
 
-    public List<TestEntity> getQnBySubjects(String sem,String sub){
-        return questionRepo.findBySemAndSub(sem,sub);
+//Get Qn BASED ON SUB ID ONLY
+
+    public List<TestEntity> getQnBySub(Long subId){
+        return questionRepo.findBySubjectId(subId);
     }
 
     //GET QN IMAGE ONLY BASED ON SEM AND SUBJECT ONLY
 
-    public  List<ImageUrlDto> getImageUrlBySubAndSem(String sem, String sub){
-        List<TestEntity> qnsEntity= questionRepo.findImageUrlBySemAndSub(sem,sub);
-
-        // Convert List<TestEntity> to List<ImageUrlDTO>
-        return qnsEntity.stream()
-                .map(entity -> new ImageUrlDto(entity.getImageurl()))
-                .collect(Collectors.toList());
-
+    public List<String> getImageUrlBySubAndSem(Long subId){
+        List<TestEntity> qnEntities = questionRepo.findBySubjectId(subId);
+        return qnEntities.stream()
+                .flatMap(qn -> qn.getImageurls().stream()) // Get all images
+                .map(ImageInfoMultipleImage::getImageUrl) // Extract only imageUrl
+                .collect(Collectors.toList()); //
     }
 
 }

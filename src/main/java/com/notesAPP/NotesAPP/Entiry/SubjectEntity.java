@@ -31,6 +31,18 @@ public class SubjectEntity {
     @JsonManagedReference
     private List<SolutionEntity> solutionEntities;
 
+    @OneToMany(mappedBy = "subjectEntity")
+    @JsonManagedReference
+    private List<TestEntity> testEntities;
+
+    public List<TestEntity> getTestEntities() {
+        return testEntities;
+    }
+
+    public void setTestEntities(List<TestEntity> testEntities) {
+        this.testEntities = testEntities;
+    }
+
     public List<SolutionEntity> getSolutionEntities() {
         return solutionEntities;
     }

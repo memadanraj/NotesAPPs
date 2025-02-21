@@ -1,7 +1,5 @@
 package com.notesAPP.NotesAPP.Controller;
 
-import com.notesAPP.NotesAPP.Dto.ImageUrlDto;
-import com.notesAPP.NotesAPP.Dto.Imageinfo;
 import com.notesAPP.NotesAPP.Entiry.TestEntity;
 import com.notesAPP.NotesAPP.Services.CloudinaryService;
 import com.notesAPP.NotesAPP.Services.QuestionService;
@@ -13,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://127.0.0.1:5500")
@@ -37,33 +34,16 @@ public class QuestionController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-//GET BASED ON SEMESTER AND SUBJECTS
-    @GetMapping("/get/{sem}/{sub}")
-    public ResponseEntity<?> getBySubject(
-            @PathVariable String sem,
-            @PathVariable String sub
-    ){
-        try{
 
-            List<TestEntity> qnBySub = questionService.getQnBySubjects(sem,sub);
-
-            return new ResponseEntity<>(qnBySub,HttpStatus.OK);
-        }
-        catch (Exception e)
-        {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    //GET ONLY IMAGE BASED ON SEMESTER ADN SUBJECT
-    @GetMapping("/getQnImage/{sem}/{sub}")
+//    GET ONLY IMAGE BASED ON   SUBJECT
+    @GetMapping("/getQnImage/{subId}")
     public ResponseEntity<?> getImageBySemAndSub(
-            @PathVariable String sem,
-            @PathVariable String sub
+            @PathVariable Long subId
+
     ){
         try{
 
-            List<ImageUrlDto> qnsImageBySub = questionService.getImageUrlBySubAndSem(sem,sub);
+            List<String> qnsImageBySub = questionService.getImageUrlBySubAndSem(subId);
 
 
                 return new ResponseEntity<>(qnsImageBySub,HttpStatus.OK);
@@ -74,16 +54,29 @@ public class QuestionController {
         }
     }
 
-    //POST QUESTIONS
-    @PostMapping("/addqn")
-    public ResponseEntity<?> imgaeupload(
-            @RequestPart("testEntity") TestEntity testEntity,
-            @RequestPart("file") MultipartFile file) throws IOException {
+    @GetMapping("getQnOnSub/{subId}")
+    public ResponseEntity<?> getOnSubSolution(@PathVariable Long subId){
+
         try {
-            Imageinfo upload = cloudinaryService.upload(file);
-            testEntity.setImageID(upload.publicId());
-            testEntity.setImageurl(upload.securedurl());
-            questionService.addqn(testEntity);
+            List<TestEntity> solutionEntities= questionService.getQnBySub(subId);
+
+            return new ResponseEntity<>(solutionEntities,HttpStatus.OK);
+        }
+        catch (Exception e){
+            return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    //POST QUESTIONS
+    @PostMapping("/addQn")
+    public ResponseEntity<?> imgaeupload(
+           @RequestParam String qName,
+           @RequestParam String qYear,
+           @RequestParam String qType,
+           @RequestParam String subName,
+           @RequestParam List<MultipartFile> files) throws IOException {
+        try {
+           TestEntity testEntity = questionService.addQuestions(qName,qYear,qType,subName,files);
 
             return new ResponseEntity<>( testEntity,HttpStatus.OK);
         }
@@ -93,10 +86,15 @@ public class QuestionController {
     }
 
     @PutMapping("updateQn/{qid}")
-    public  ResponseEntity<?> updateQns(@PathVariable long qid, @RequestPart("testEntity") TestEntity newEntry,
-                                        @RequestPart(value = "file", required = false) MultipartFile file){
+    public  ResponseEntity<?> updateQns(@PathVariable long qid,
+                                        @RequestPart("testEntity") TestEntity newEntry,
+                                        @RequestParam String qName,
+                                        @RequestParam String qYear,
+                                        @RequestParam String qType,
+                                        @RequestParam (required = false)List<String> deleteIds,
+                                        @RequestPart(value = "file", required = false) List<MultipartFile> file){
         try {
-             TestEntity updatedQn=questionService.updateQn(qid,newEntry,file);
+             TestEntity updatedQn=questionService.updateQn(qid,qName,qYear,qType,deleteIds,file);
 
              //REMEMBER ME TO REMOVE ENTITY RETURN IN FINAL SECURITY
              return new ResponseEntity<>(updatedQn,HttpStatus.CREATED);
@@ -119,20 +117,4 @@ public class QuestionController {
             return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
