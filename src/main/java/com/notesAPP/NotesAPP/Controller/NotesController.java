@@ -29,6 +29,8 @@ public class NotesController {
     @Autowired
     private Cloudinary cloudinary;
 
+    String folderName= "Notes";
+
     @PostMapping("add")
     public ResponseEntity<NotesEntiry> saveNotes(
             @RequestParam String content,
@@ -59,7 +61,7 @@ public class NotesController {
     public  ResponseEntity<?> uploadImageRichText(@RequestPart("file") MultipartFile file){
         try {
 
-            Imageinfo filename= cloudinaryService.upload(file);
+            Imageinfo filename= cloudinaryService.upload(file,folderName);
 
             String imageUrl = cloudinary.url().generate(filename.publicId());
 
@@ -67,10 +69,7 @@ public class NotesController {
         }
         catch (Exception e)
         {
-            // Log the error (optional)
-            e.printStackTrace();
-
-            // Return an informative error message
+       // Return an informative error message
             return new ResponseEntity<>("Error uploading image: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

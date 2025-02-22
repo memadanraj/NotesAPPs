@@ -5,6 +5,7 @@ import com.notesAPP.NotesAPP.Repo.NoticeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,11 +14,17 @@ public class NoticeService {
 
     @Autowired
     private NoticeRepo noticeRepo;
+    @Autowired
+    private SSENotificationService sseNotificationService;
 
     //SAVE NEW NOTICE
-    public NoticeEntity saveNotice(NoticeEntity noticeEntity){
-
-        return noticeRepo.save(noticeEntity);
+    public void saveNotice(String noticeName,String noticeMessage){
+        NoticeEntity newNotice= new NoticeEntity();
+        newNotice.setNoticeMessage(noticeMessage);
+        newNotice.setNoticeName(noticeName);
+        newNotice.setCreatedDate(LocalDateTime.now());
+        noticeRepo.save(newNotice);
+        sseNotificationService.sendNotice(newNotice.getNoticeMessage());
     }
 
     //GET ALL NOTICE
@@ -31,6 +38,14 @@ public class NoticeService {
 
         noticeRepo.deleteById(nid);
     }
+
+    //GET NOTICE BASED ON TIME
+    public void pushNotice(LocalDateTime createdDate){
+
+        List<NoticeEntity> recentNotice= noticeRepo.findByCreatedDateAfter(createdDate);
+
+    }
+
 
     //UPDATE NOTICE
 

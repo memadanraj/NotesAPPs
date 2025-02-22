@@ -2,6 +2,8 @@ package com.notesAPP.NotesAPP.Entiry;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "NoticeEntity")
 public class NoticeEntity {
@@ -15,6 +17,17 @@ public class NoticeEntity {
 
     @Column(name = "noticeMessage", nullable = false)
     private String noticeMessage;
+
+    @Column(nullable = false)
+    private LocalDateTime createdDate;
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
 
     public Long getNoticeId() {
         return noticeId;

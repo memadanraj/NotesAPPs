@@ -26,6 +26,7 @@ public class QuestionService {
     private CloudinaryService cloudinaryService;
     @Autowired
     private SubjectRepo subjectRepo;
+    String folderName= "Questions";
 
     //POST NEW QUESTIONS
     public TestEntity addqn(TestEntity testEntity) {
@@ -39,11 +40,12 @@ public class QuestionService {
     @Transactional
     public  TestEntity addQuestions(String qName,
                                     String qYears,
-                                    String qtype ,
+                                    String qType ,
                                     String subName,
                                     List<MultipartFile> file) throws IOException {
 
-        List<Imageinfo> imageUrl= cloudinaryService.uploadListImages(file);
+
+        List<Imageinfo> imageUrl= cloudinaryService.uploadListImages(file,folderName);
         List<ImageInfoMultipleImage> imageDataList = imageUrl.stream()
                 .map(img -> new ImageInfoMultipleImage(img.publicId(),img.securedurl()))
                 .toList();
@@ -54,7 +56,7 @@ public class QuestionService {
             TestEntity add = new TestEntity();
             add.setName(qName);
             add.setYear(qYears);
-            add.setType(qtype);
+            add.setType(qType);
             add.setSubjectEntity(subjectEntity);
             add.setImageurls(imageDataList);
             return questionRepo.save(add);
@@ -98,7 +100,7 @@ public class QuestionService {
 
             if (!file.isEmpty()) {
 
-                List<Imageinfo> imageUrl = cloudinaryService.uploadListImages(file);
+                List<Imageinfo> imageUrl = cloudinaryService.uploadListImages(file,folderName);
                 List<ImageInfoMultipleImage> imageDataList = imageUrl.stream()
                         .map(img -> new ImageInfoMultipleImage(img.publicId(), img.securedurl()))
                         .toList();

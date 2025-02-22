@@ -24,11 +24,12 @@ public class SolutionService {
     private CloudinaryService cloudinaryService;
     @Autowired
     private SubjectRepo subjectRepo;
+    String folderName= "Solution";
 
     //ADD SOLUTIONS
     public SolutionEntity UploadNotes(String solutionEntity, List<MultipartFile> file,String subName) throws IOException {
 
-        List<Imageinfo> imageUrl= cloudinaryService.uploadListImages(file);
+        List<Imageinfo> imageUrl= cloudinaryService.uploadListImages(file,folderName);
         List<ImageInfoMultipleImage> imageDataList = imageUrl.stream()
                 .map(img -> new ImageInfoMultipleImage(img.publicId(),img.securedurl()))
                 .collect(Collectors.toList());
@@ -82,7 +83,7 @@ public class SolutionService {
 
             if (!files.isEmpty()) {
 
-                List<Imageinfo> imageUrl = cloudinaryService.uploadListImages(files);
+                List<Imageinfo> imageUrl = cloudinaryService.uploadListImages(files,folderName);
                 List<ImageInfoMultipleImage> imageDataList = imageUrl.stream()
                         .map(img -> new ImageInfoMultipleImage(img.publicId(), img.securedurl()))
                         .toList();

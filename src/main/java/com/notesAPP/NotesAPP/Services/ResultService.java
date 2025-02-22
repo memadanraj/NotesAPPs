@@ -19,12 +19,11 @@ public class ResultService {
     private CloudinaryService cloudinaryService;
     @Autowired
     private ResultRepo resultRepo;
+    String folderName= "Result";
 
     public ResultEntity uploadResults(String resultName, MultipartFile pdfFIle) throws IOException {
 
-        PDFinfo pdFinfo = cloudinaryService.uploadPDF(pdfFIle);
-//        String pdfUrl = cloudinaryService.generateImgUrl(pdFinfo.publicId());
-
+        PDFinfo pdFinfo = cloudinaryService.uploadPDF(pdfFIle,folderName);
         ResultEntity result= new ResultEntity();
         result.setResultName(resultName);
         result.setResultPublicId(pdFinfo.publicId());
@@ -40,7 +39,7 @@ public class ResultService {
 //DELETE RESULT BY ID
     public void deleteResult(Long resultId) throws IOException {
         Optional<ResultEntity> found= resultRepo.findById(resultId);
-        if(found.isPresent() && !found.isEmpty()){
+        if(found.isPresent() ){
            ResultEntity resultIndb= found.get();
            String foundPublicId= resultIndb.getResultPublicId();
            cloudinaryService.delete(foundPublicId);

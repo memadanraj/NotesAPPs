@@ -24,10 +24,10 @@ public class CloudinaryService {
     }
 
 
-    public Imageinfo upload(MultipartFile file) throws IOException {
+    public Imageinfo upload(MultipartFile file,String folder) throws IOException {
 
        Map uploadResult= cloudinary.uploader()
-                .upload(file.getBytes(), ObjectUtils.emptyMap());
+                .upload(file.getBytes(), ObjectUtils.asMap("folder",folder));
 
       Imageinfo imageinfo= new Imageinfo(
                uploadResult.get("public_id").toString(),
@@ -37,25 +37,24 @@ public class CloudinaryService {
 return imageinfo;
     }
 
-    public PDFinfo uploadPDF (MultipartFile pdfFile) throws IOException {
+    public PDFinfo uploadPDF (MultipartFile pdfFile,String folder) throws IOException {
 
         Map uploadPDFresult = cloudinary.uploader()
-                .upload(pdfFile.getBytes(),ObjectUtils.emptyMap());
-       PDFinfo pdFinfo = new PDFinfo(
+                .upload(pdfFile.getBytes(),ObjectUtils.asMap("folder",folder));
+        return new PDFinfo(
                uploadPDFresult.get("public_id").toString(),
                uploadPDFresult.get("secure_url").toString()
-       ) ;
-       return pdFinfo;
+       );
     }
 
     //UPLOAD MUTI IMAGES IN CLOUDINARY
-    public List<Imageinfo> uploadListImages (List<MultipartFile> imageurls) throws IOException {
+    public List<Imageinfo> uploadListImages (List<MultipartFile> imageurls, String folder) throws IOException {
 
         List<Imageinfo> imageInfoList= new ArrayList<>();
 
         for (MultipartFile file : imageurls) {
             Map uploadResult = cloudinary.uploader()
-                    .upload(file.getBytes(), ObjectUtils.emptyMap());
+                    .upload(file.getBytes(), ObjectUtils.asMap("folder" ,folder));
 
             Imageinfo imageinfo = new Imageinfo(
                     uploadResult.get("public_id").toString(),
