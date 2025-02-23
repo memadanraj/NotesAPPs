@@ -1,6 +1,10 @@
 package com.notesAPP.NotesAPP.Entiry;
 import jakarta.persistence.*;
+
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 
@@ -20,8 +24,11 @@ public class UserEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "Roles")
-    private List<String> Role;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles_map",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_user_id"))
+    private Set<RolesUserEntity> rolesUserEntities = new HashSet<>();
 
     public Long getUid() {
         return uid;
@@ -39,14 +46,6 @@ public class UserEntity {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -55,11 +54,19 @@ public class UserEntity {
         this.email = email;
     }
 
-    public List<String> getRole() {
-        return Role;
+    public String getPassword() {
+        return password;
     }
 
-    public void setRole(List<String> role) {
-        Role = role;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<RolesUserEntity> getRolesUserEntities() {
+        return rolesUserEntities;
+    }
+
+    public void setRolesUserEntities(Set<RolesUserEntity> rolesUserEntities) {
+        this.rolesUserEntities = rolesUserEntities;
     }
 }
