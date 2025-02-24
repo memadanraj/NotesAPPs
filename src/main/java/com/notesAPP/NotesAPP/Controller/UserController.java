@@ -18,6 +18,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    //GET ALL USER INFORMATION ADMIN
     @GetMapping("admin/getAll")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?>getAllUsers(){
@@ -36,6 +37,7 @@ public class UserController {
 
     }
 
+    // PUBLIC REGISTER FOR ACCOUNT
     @PostMapping("public/reg")
     public ResponseEntity<?> regUser(@RequestParam String uName,
                                      @RequestParam String uPassword,
@@ -67,6 +69,80 @@ public class UserController {
     public ResponseEntity<?> createRoleAdmin(@RequestParam String roleName){
         userService.createRole(roleName);
         return ResponseEntity.ok("Role Created ");
+    }
+
+    //DELETE USER ACCOUNT BY USER SELF
+    @DeleteMapping("user/removeAcc")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> removeUserAccount (){
+
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            UserEntity dUserEntity = userService.findByUserName(username);
+            Long userId= dUserEntity.getUid();
+            userService.removeUserAcc(userId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //USER REMOVE BY ADMIN USING USER ID
+    @DeleteMapping("admin/removeUserAccs/{userIds}")
+    public ResponseEntity<?> removeUsersByAdmin(@PathVariable Long userIds){
+        try {
+            userService.removeUserAcc(userIds);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>("User Id Not Found ",HttpStatus.NOT_FOUND);
+        }
+
+    }
+
+    //UPDATE USER INFO BY USER
+    @PutMapping("user/pwChange")
+    public ResponseEntity<?> updateUserInfoPw(@RequestParam String uPassword ){
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            userService.updateUserInfo(username,uPassword);
+            // i thing some validation required here from frontend or backend what ever
+            return new ResponseEntity<>(HttpStatus.CREATED);
+
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+        //UPDATE USER DETAILS BY ADMINS/ ADD ROle
+        @PutMapping("admin/updateUserInfo/{userId}")
+        public ResponseEntity<?> updateUserByAdmin(@RequestParam String newPassword ,
+                                                   @RequestParam (required = false )String roleName,
+                                                   @PathVariable Long userId){
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+           UserEntity userEntity=  userService.updateUserInfoAndRole(userId,newPassword,roleName);
+            return new ResponseEntity<>(userEntity,HttpStatus.CREATED);
+        }catch (Exception e){
+            return new ResponseEntity<>(e,HttpStatus.NOT_FOUND);
+        }
+    }
+
+    //USER LOGIN ENTRYPOINT
+    @PostMapping("/public/login")
+    public ResponseEntity<?> userLoginEntry(@RequestParam String userName,
+                                            @RequestParam String userPassword){
+        try {
+            String test = userService.verifyUserLogin(userName,userPassword);
+            return new ResponseEntity<>(test,HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
     }
 
 

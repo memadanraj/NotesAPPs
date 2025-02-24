@@ -1,4 +1,5 @@
 package com.notesAPP.NotesAPP.Entiry;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Collection;
@@ -24,11 +25,22 @@ public class UserEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @JsonManagedReference
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles_map",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_user_id"))
     private Set<RolesUserEntity> rolesUserEntities = new HashSet<>();
+
+    public void addRole(RolesUserEntity role) {
+        rolesUserEntities.add(role);
+        role.getUsers().add(this);
+    }
+
+    public void removeRole(RolesUserEntity role) {
+        rolesUserEntities.remove(role);
+        role.getUsers().remove(this);
+    }
 
     public Long getUid() {
         return uid;

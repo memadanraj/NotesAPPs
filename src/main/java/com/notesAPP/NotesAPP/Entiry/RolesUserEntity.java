@@ -1,8 +1,9 @@
 package com.notesAPP.NotesAPP.Entiry;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "user_roles")
@@ -13,14 +14,16 @@ public class RolesUserEntity {
     private  Long roleUserId;
 
     private String roleName;
-    @ManyToMany(mappedBy = "rolesUserEntities")
-    private Collection<UserEntity> users;
 
-    public Collection<UserEntity> getUsers() {
+    @JsonBackReference
+    @ManyToMany(mappedBy = "rolesUserEntities")
+    private Set<UserEntity> users = new HashSet<>();
+
+    public Set<UserEntity> getUsers() {
         return users;
     }
 
-    public void setUsers(Collection<UserEntity> users) {
+    public void setUsers(Set<UserEntity> users) {
         this.users = users;
     }
 
