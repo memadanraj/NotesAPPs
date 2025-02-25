@@ -3,7 +3,6 @@ package com.notesAPP.NotesAPP.Impl;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.transaction.SystemException;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
@@ -17,11 +16,11 @@ import java.util.Map;
 @Service
 public class JWTService {
 
-    String secretkey= "";
+    String secretKey = "";
     public JWTService(){
         try {
             KeyGenerator sk=KeyGenerator.getInstance("HmacSHA256");
-            secretkey=Base64.getEncoder().encodeToString(sk.generateKey().getEncoded());
+            secretKey =Base64.getEncoder().encodeToString(sk.generateKey().getEncoded());
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -43,7 +42,7 @@ public class JWTService {
     }
 
     private Key getkey() {
-        byte[] keys= Decoders.BASE64.decode(secretkey);
+        byte[] keys= Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keys);
 
     }
