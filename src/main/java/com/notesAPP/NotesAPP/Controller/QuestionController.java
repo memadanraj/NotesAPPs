@@ -6,6 +6,7 @@ import com.notesAPP.NotesAPP.Services.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,7 +25,8 @@ public class QuestionController {
     private CloudinaryService cloudinaryService;
 
 // GET ALL QUESTIONS
-    @GetMapping("/getAllQn")
+    @GetMapping("admin/getAllQn")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllQn(){
         try {
             List<TestEntity> allQns =questionService.getAllQns();
@@ -36,15 +38,13 @@ public class QuestionController {
     }
 
 //    GET ONLY IMAGE BASED ON   SUBJECT
-    @GetMapping("/getQnImage/{subId}")
+    @GetMapping("user/getQnImage/{subId}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getImageBySemAndSub(
             @PathVariable Long subId
-
     ){
         try{
-
             List<String> qnsImageBySub = questionService.getImageUrlBySubAndSem(subId);
-
 
                 return new ResponseEntity<>(qnsImageBySub,HttpStatus.OK);
         }
@@ -54,7 +54,8 @@ public class QuestionController {
         }
     }
 
-    @GetMapping("getQnOnSub/{subId}")
+    @GetMapping("user/getQnOnSub/{subId}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getOnSubSolution(@PathVariable Long subId){
 
         try {
@@ -68,7 +69,8 @@ public class QuestionController {
     }
 
     //POST QUESTIONS
-    @PostMapping("/addQn")
+    @PostMapping("admin/addQn")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> imgaeupload(
            @RequestParam String qName,
            @RequestParam String qYear,
@@ -85,7 +87,8 @@ public class QuestionController {
         }
     }
 
-    @PutMapping("updateQn/{qid}")
+    @PutMapping("admin/updateQn/{qid}")
+    @PreAuthorize("hasRole('ADMIN')")
     public  ResponseEntity<?> updateQns(@PathVariable long qid,
                                         @RequestPart("testEntity") TestEntity newEntry,
                                         @RequestParam String qName,
@@ -106,7 +109,8 @@ public class QuestionController {
 
     }
 
-    @DeleteMapping("remove/{qid}")
+    @DeleteMapping("admin/remove/{qid}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteQnById(@PathVariable Long qid){
         try {
             questionService.deleteQn(qid);

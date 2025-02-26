@@ -9,6 +9,7 @@ import com.notesAPP.NotesAPP.Services.NotesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +32,8 @@ public class NotesController {
 
     String folderName= "Notes";
 
-    @PostMapping("add")
+    @PostMapping("admin/addNotes")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<NotesEntiry> saveNotes(
             @RequestParam String content,
 
@@ -57,7 +59,8 @@ public class NotesController {
     }
 
     //UPLOAD IMAGE FROM TEXT EDITOR
-    @PostMapping("upload-images")
+    @PostMapping("admin/upload-images")
+    @PreAuthorize("hasRole('ADMIN')")
     public  ResponseEntity<?> uploadImageRichText(@RequestPart("file") MultipartFile file){
         try {
 
@@ -75,7 +78,8 @@ public class NotesController {
     }
 
     //GET ALL NOTES
-    @GetMapping("getAllNotes")
+    @GetMapping("admin/getAllNotes")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllNotes(){
 
         try{
@@ -91,7 +95,8 @@ public class NotesController {
 
     //GET NOTES BASED ON CHAPTERS
 
-    @GetMapping("getNotesONChap/{chapID}")
+    @GetMapping("user/getNotesONChap/{chapID}")
+    @PreAuthorize("hasRole('USER')")
     public  ResponseEntity<?> getNotesOnChapters(@PathVariable Long chapID){
 
         try{
@@ -108,7 +113,8 @@ public class NotesController {
 
     //DELETE NOTES BASES ON CHAPTERS
 
-    @DeleteMapping("deleteNotesOnChap/{chapID}")
+    @DeleteMapping("admin/deleteNotesOnChap/{chapID}")
+    @PreAuthorize("hasRole('ADMIN')")
     public  ResponseEntity<?> deleteNotesOnChap( @PathVariable Long chapID){
         try {
             notesService.removeNotes(chapID);
@@ -123,7 +129,8 @@ public class NotesController {
 
     //UPDATE BASED ON CHAPTERS
 
-    @PutMapping("updateOnChap/{chapID}")
+    @PutMapping("admin/updateOnChap/{chapID}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateNotesOnChap( @RequestBody NotesEntiry content,
                                                 @PathVariable Long chapID){
 

@@ -4,6 +4,7 @@ import com.notesAPP.NotesAPP.Dto.SubjectDto;
 import com.notesAPP.NotesAPP.Repo.SubjectRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +21,8 @@ public class MapingControllers {
     @Autowired
     private SubjectRepo subjectRepo;
 
-   @GetMapping("/sub")
+   @GetMapping("admin/sub")
+   @PreAuthorize("hasRole('ADMIN')")
    public ResponseEntity<List<SubjectDto>> getAllSubjects() {
        try {
            List<SubjectDto> subjectEntities = subjectRepo.findAll()

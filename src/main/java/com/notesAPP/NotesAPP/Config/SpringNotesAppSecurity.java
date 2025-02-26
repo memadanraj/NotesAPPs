@@ -1,5 +1,6 @@
 package com.notesAPP.NotesAPP.Config;
 
+import com.notesAPP.NotesAPP.Filters.JWTSecurityFilter;
 import com.notesAPP.NotesAPP.Impl.UserdetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
@@ -24,6 +26,8 @@ public class SpringNotesAppSecurity {
 
 @Autowired
 private UserdetailsService userdetailsService;
+@Autowired
+private JWTSecurityFilter jwtSecurityFilter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http ) throws Exception {
 
@@ -31,12 +35,26 @@ private UserdetailsService userdetailsService;
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for APIs
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // No sessions
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/userinfo/admin/**").hasRole("ADMIN")  // Only ADMIN can access
-                        .requestMatchers("/api/userinfo/user/**").hasAnyRole("USER", "ADMIN")  // USER & ADMIN can access
+                        // Only ADMIN can access
+                        .requestMatchers("/api/userinfo/admin/**"
+                                ,"/api/mapping/admin/**"
+                                ,"/api/notes/admin/**"
+                                ,"/api/qn/admin/**"
+                                , "/api/notice/admin/**",
+                                "/api/results/admin/**",
+                                "/api/solution/admin/**").hasRole("ADMIN")
+                        // USER & ADMIN can access
+                        .requestMatchers("/api/userinfo/user/**",
+                                "/api/notes/user/**"
+                                ,"/api/qn/user/**"
+                                , "/api/notice/user/**",
+                                "/api/results/user/**",
+                                "/api/solution/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/userinfo/public/**").permitAll()  // Anyone can access
                         .anyRequest().authenticated()  // All other endpoints need authentication
                 )
-                .httpBasic(Customizer.withDefaults());
+                .addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 

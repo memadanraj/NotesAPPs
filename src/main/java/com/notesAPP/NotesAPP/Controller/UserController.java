@@ -58,9 +58,10 @@ public class UserController {
                                                @RequestParam (required = false) String roleName){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        authentication.getName();
+        String adminName= authentication.getName();
+
         userService.createUserAdmin(uName,uPassword,uEmail,roleName);
-        return ResponseEntity.ok("User is Created Admin");
+        return ResponseEntity.ok("User is Created Admin"+adminName);
     }
 
     //ADMIN ADD ROLE
@@ -90,6 +91,7 @@ public class UserController {
 
     //USER REMOVE BY ADMIN USING USER ID
     @DeleteMapping("admin/removeUserAccs/{userIds}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> removeUsersByAdmin(@PathVariable Long userIds){
         try {
             userService.removeUserAcc(userIds);
@@ -103,6 +105,7 @@ public class UserController {
 
     //UPDATE USER INFO BY USER
     @PutMapping("user/pwChange")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> updateUserInfoPw(@RequestParam String uPassword ){
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -117,9 +120,10 @@ public class UserController {
     }
 
 
-        //UPDATE USER DETAILS BY ADMINS/ ADD ROle
-        @PutMapping("admin/updateUserInfo/{userId}")
-        public ResponseEntity<?> updateUserByAdmin(@RequestParam String newPassword ,
+    //UPDATE USER DETAILS BY ADMINS/ ADD ROle
+    @PutMapping("admin/updateUserInfo/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> updateUserByAdmin(@RequestParam String newPassword ,
                                                    @RequestParam (required = false )String roleName,
                                                    @PathVariable Long userId){
         try {
