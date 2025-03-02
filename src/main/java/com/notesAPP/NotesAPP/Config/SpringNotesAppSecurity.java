@@ -44,6 +44,7 @@ private JWTSecurityFilter jwtSecurityFilter;
                         // USER & ADMIN can access
                         .requestMatchers("/api/userinfo/user/**",
                                 "/api/notes/user/**"
+                                ,"api/ComQn/user/**"
                                 ,"/api/qn/user/**"
                                 , "/api/notice/user/**",
                                 "/api/results/user/**",
