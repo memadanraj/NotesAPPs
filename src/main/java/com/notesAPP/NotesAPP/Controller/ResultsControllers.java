@@ -11,11 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/results")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ResultsControllers {
     @Autowired
    private ResultService resultService;

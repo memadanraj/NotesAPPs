@@ -47,10 +47,14 @@ private JWTSecurityFilter jwtSecurityFilter;
                                 ,"api/ComQn/user/**"
                                 ,"/api/qn/user/**"
                                 , "/api/notice/user/**",
-                                "/api/results/user/**",
+                                "/api/results/user/**"
+                                ,"/api/mapping/user/**",
                                 "/api/solution/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/userinfo/public/**",
-                                "/v3/api-docs", "/swagger-ui/**", "/swagger-ui.html").permitAll()  // Anyone can access
+                                "/v3/api-docs",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/api/ComQn/public/**").permitAll()  // Anyone can access
                         .anyRequest().authenticated()  // All other endpoints need authentication
                 )
                 .addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class);

@@ -11,8 +11,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/ComQn")
+@CrossOrigin(origins = "http://localhost:5173")
 public class CommunityQuestionController {
 
     @Autowired
@@ -56,5 +59,18 @@ public class CommunityQuestionController {
     }
 
     //GET ALL QUESTIONS
+
+    @GetMapping("/public/getAllAnswers")
+    public ResponseEntity<List<CommunityQuestionEntity>> getAllQuestions(){
+        try{
+            List<CommunityQuestionEntity> allComQuestions= communityQuestionService.getComQuestions();
+            return new ResponseEntity<>(allComQuestions,HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        }
+    }
+
+
 
 }

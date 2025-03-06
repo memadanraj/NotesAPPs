@@ -6,6 +6,8 @@ import com.notesAPP.NotesAPP.Repo.CommunityQuestionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CommunityQuestionService {
 
@@ -16,6 +18,11 @@ public class CommunityQuestionService {
                                                      UserEntity userEntity){
         communityQuestionEntity.setUser(userEntity);
          return communityQuestionRepo.save(communityQuestionEntity);
+    }
+
+    public List<CommunityQuestionEntity> getComQuestions(){
+
+        return communityQuestionRepo.findAll();
     }
 
 }
