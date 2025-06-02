@@ -6,11 +6,8 @@ import com.notesAPP.NotesAPP.Impl.JWTService;
 import com.notesAPP.NotesAPP.Repo.RoleRepo;
 import com.notesAPP.NotesAPP.Repo.UserRepo;
 import jakarta.transaction.Transactional;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -116,15 +113,5 @@ public class UserService {
             throw new RuntimeException("User Id Not Found ");
 
     }
-//USER LOGIN VERIFY HERE TEST
-    public String verifyUserLogin(String username, String userPassword) {
 
-        Authentication authentication= authenticationManager.
-                authenticate(new UsernamePasswordAuthenticationToken(username,
-                       userPassword));
-       if (authentication.isAuthenticated())
-           return jwtService.generateToken(username);
-       return "failed";
-
-    }
 }

@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
-@CrossOrigin(origins = "*")
+
 @RestController
 @RequestMapping("api/solution")
+@CrossOrigin(origins = "http://localhost:5173")
 public class SolutionController {
     @Autowired
     private SolutionService solutionService;

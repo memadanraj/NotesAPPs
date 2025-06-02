@@ -1,5 +1,6 @@
 package com.notesAPP.NotesAPP.Entiry;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -19,7 +20,8 @@ public class NoticeEntity {
     private String noticeMessage;
 
     @Column(nullable = false)
-    private LocalDateTime createdDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
+    private LocalDateTime  createdDate = LocalDateTime.now();
 
     public LocalDateTime getCreatedDate() {
         return createdDate;

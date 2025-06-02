@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.util.List;
 
-@CrossOrigin(value="*")
 @RestController
 @RequestMapping("api/notice")
+
 public class NoticeController {
 
     @Autowired
@@ -38,7 +38,7 @@ public class NoticeController {
 
     //DISPLAY ALL NOTICE HERE
 
-    @GetMapping("user/getAllNotice")
+    @GetMapping("/user/getAllNotice")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getAllNotice() {
         try {

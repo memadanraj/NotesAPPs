@@ -1,22 +1,35 @@
 package com.notesAPP.NotesAPP.Controller;
 
+import com.notesAPP.NotesAPP.Dto.LoginRequestDto;
 import com.notesAPP.NotesAPP.Entiry.UserEntity;
+import com.notesAPP.NotesAPP.Impl.JWTService;
 import com.notesAPP.NotesAPP.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/api/userinfo")
+
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private JWTService jwtService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     //GET ALL USER INFORMATION ADMIN
     @GetMapping("admin/getAll")
@@ -136,19 +149,19 @@ public class UserController {
         }
     }
 
-    //USER LOGIN ENTRYPOINT
     @PostMapping("/public/login")
-    public ResponseEntity<?> userLoginEntry(@RequestParam String userName,
-                                            @RequestParam String userPassword){
+    public ResponseEntity<?> userLoginEntry(@RequestBody LoginRequestDto loginRequestDto) {
         try {
-            String test = userService.verifyUserLogin(userName,userPassword);
-            return new ResponseEntity<>(test,HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequestDto.getUserName(), loginRequestDto.getUserPassword())
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String token = jwtService.generateToken((UserDetails) authentication.getPrincipal());
+            return ResponseEntity.ok(token);  // Return the token
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);  // Unauthorized access
         }
-
     }
-
 
 
 

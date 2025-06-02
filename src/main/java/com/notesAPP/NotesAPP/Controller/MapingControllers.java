@@ -1,6 +1,8 @@
 package com.notesAPP.NotesAPP.Controller;
 
 import com.notesAPP.NotesAPP.Dto.SubjectDto;
+import com.notesAPP.NotesAPP.Entiry.SemesterEntiry;
+import com.notesAPP.NotesAPP.Repo.SemesterRepo;
 import com.notesAPP.NotesAPP.Repo.SubjectRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/mapping")
+
 public class MapingControllers {
 
     @Autowired
     private SubjectRepo subjectRepo;
+    @Autowired
+    private SemesterRepo semesterRepo;
 
    @GetMapping("admin/sub")
    @PreAuthorize("hasRole('ADMIN')")
@@ -37,5 +41,18 @@ public class MapingControllers {
            return ResponseEntity.badRequest().build();
        }
    }
+
+   //web only for
+    @GetMapping("user/sem")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> getAllNotesData() {
+        try {
+            List<SemesterEntiry> subjectEntities = semesterRepo.findAll();
+
+            return ResponseEntity.ok(subjectEntities);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 
 }
